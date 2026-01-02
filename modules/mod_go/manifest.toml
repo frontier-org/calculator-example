@@ -1,0 +1,10 @@
+name = "Mod Go"
+version = "1.0.0"
+extension = "go"
+suppress_window = true
+
+[dev]
+strategy = "build"
+
+[build]
+command = "go build -o %OUT% %IN%"

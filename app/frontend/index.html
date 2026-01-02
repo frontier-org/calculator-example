@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="frontier-title" content="Polyglot Calc">
+    <meta name="frontier-icon" content="icon.ico">
+    <meta name="frontier-width" content="400">
+    <meta name="frontier-height" content="650">
+    <meta name="frontier-resizable" content="false">
+    <meta name="frontier-x" content="(screen_w - win_w) / 2">
+    <meta name="frontier-y" content="(screen_h - win_h) / 2">
+
+    <style>
+        :root {
+            --bg: #0f172a;
+            --calc-bg: #1e293b;
+            --display-bg: #0f172a;
+            --btn-num: #334155;
+            --btn-op: #1e293b;
+            --btn-accent: #38bdf8;
+            --text: #f1f5f9;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            user-select: none;
+        }
+
+        .calculator {
+            background: var(--calc-bg);
+            width: 340px;
+            padding: 20px;
+            border-radius: 24px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        #engine-selector {
+            width: 100%;
+            padding: 8px;
+            background: var(--display-bg);
+            color: var(--btn-accent);
+            border: 1px solid #334155;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-weight: bold;
+            outline: none;
+        }
+
+        .display-container {
+            background: var(--display-bg);
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            text-align: right;
+            border: 1px solid #334155;
+        }
+
+        #expr-display {
+            font-size: 0.9rem;
+            opacity: 0.6;
+            min-height: 1.2rem;
+            word-break: break-all;
+        }
+
+        #result-display {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--btn-accent);
+            overflow: hidden;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+
+        button {
+            aspect-ratio: 1;
+            border: none;
+            border-radius: 16px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--text);
+            cursor: pointer;
+            transition: all 0.1s;
+            background: var(--btn-num);
+        }
+
+        button:hover { transform: translateY(-2px); }
+        button:active { transform: translateY(0); opacity: 0.8; }
+
+        .op { background: var(--btn-op); color: var(--btn-accent); }
+        .action { background: #334155; color: #fb7185; }
+        .equals { 
+            background: var(--btn-accent); 
+            color: var(--bg); 
+            grid-column: span 2; 
+            aspect-ratio: auto; 
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="calculator">
+    <select id="engine-selector">
+        <option value="calc_c">C Engine</option>
+        <option value="calc_cpp">C++ Engine</option>
+        <option value="calc_go">Go Engine</option>
+        <option value="calc_py">Python Engine</option>
+        <option value="calc_node">Node.js Engine</option>
+        <option value="calc_java">Java Engine</option>
+    </select>
+
+    <div class="display-container">
+        <div id="expr-display"></div>
+        <div id="result-display">0</div>
+    </div>
+
+    <div class="grid">
+        <button class="action" onclick="clearAll()">C</button>
+        <button class="op" onclick="add('(')">(</button>
+        <button class="op" onclick="add(')')">)</button>
+        <button class="op" onclick="add('/')">/</button>
+
+        <button onclick="add('7')">7</button>
+        <button onclick="add('8')">8</button>
+        <button onclick="add('9')">9</button>
+        <button class="op" onclick="add('*')">*</button>
+
+        <button onclick="add('4')">4</button>
+        <button onclick="add('5')">5</button>
+        <button onclick="add('6')">6</button>
+        <button class="op" onclick="add('-')">-</button>
+
+        <button onclick="add('1')">1</button>
+        <button onclick="add('2')">2</button>
+        <button onclick="add('3')">3</button>
+        <button class="op" onclick="add('+')">+</button>
+
+        <button onclick="add('0')">0</button>
+        <button onclick="add('.')">.</button>
+        <button class="equals" onclick="calculate()">=</button>
+    </div>
+</div>
+
+<script>
+    const exprDiv = document.getElementById('expr-display');
+    const resDiv = document.getElementById('result-display');
+    let currentExpr = "";
+
+    function add(char) {
+        currentExpr += char;
+        exprDiv.innerText = currentExpr;
+    }
+
+    function clearAll() {
+        currentExpr = "";
+        exprDiv.innerText = "";
+        resDiv.innerText = "0";
+    }
+
+    function calculate() {
+        if (currentExpr === "") return;
+        
+        const engine = document.getElementById('engine-selector').value;
+        // IMPORTANT: Remove all spaces before sending to backend
+        const cleanExpr = currentExpr.replace(/\s+/g, '');
+        
+        window.ipc.postMessage(`${engine}|${cleanExpr}`);
+    }
+
+    // Keyboard Support
+    document.addEventListener('keydown', (e) => {
+        // Numbers and Operators
+        if (/[0-9+\-*/().]/.test(e.key)) {
+            add(e.key);
+        }
+        // Enter = Calculate
+        if (e.key === 'Enter') {
+            calculate();
+        }
+        // Escape or 'c' = Clear
+        if (e.key === 'Escape' || e.key.toLowerCase() === 'c') {
+            clearAll();
+        }
+        // Backspace = Delete last
+        if (e.key === 'Backspace') {
+            currentExpr = currentExpr.slice(0, -1);
+            exprDiv.innerText = currentExpr;
+        }
+    });
+
+    window.Frontier = {
+        dispatch: (type, msg) => {
+            resDiv.innerText = msg;
+        }
+    };
+</script>
+
+</body>
+</html>

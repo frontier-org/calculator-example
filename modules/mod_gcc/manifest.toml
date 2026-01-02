@@ -1,0 +1,10 @@
+name = "Mod GCC"
+version = "1.0.0"
+extension = "c"
+suppress_window = true
+
+[dev]
+strategy = "build"
+
+[build]
+command = "gcc %IN% -o %OUT%"

@@ -1,0 +1,7 @@
+name = "Mod NodeJS"
+version = "1.0.0"
+extension = "js"
+interpreter = "node"
+
+[dev]
+strategy = "interpreter"

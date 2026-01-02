@@ -1,0 +1,7 @@
+name = "Mod Python"
+version = "1.0.0"
+extension = "py"
+interpreter = "python"
+
+[dev]
+strategy = "interpreter"

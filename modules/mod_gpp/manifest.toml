@@ -1,0 +1,10 @@
+name = "Mod GPP"
+version = "1.0.0"
+extension = "cpp"
+suppress_window = true
+
+[dev]
+strategy = "build"
+
+[build]
+command = "g++ %IN% -o %OUT%"
