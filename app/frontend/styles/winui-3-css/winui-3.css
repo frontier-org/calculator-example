@@ -1,0 +1,404 @@
+/* 
+   WinUI 3 Design System for HTML5 
+   A high-fidelity replica of Windows 11 Fluent Design.
+   https://github.com/KaioHSG/winui-3-css
+*/
+
+/* --- Standardizing Reset --- */
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed, 
+figure, figcaption, footer, header, hgroup, 
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 100%;
+    vertical-align: baseline;
+}
+
+/* Ensure consistent box-sizing */
+* {
+    box-sizing: border-box;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure, 
+footer, header, hgroup, menu, nav, section {
+    display: block;
+}
+
+/* Set core body defaults */
+body {
+    line-height: 1.5;
+    background-color: var(--wui-bg-page);
+    color: var(--wui-text-main);
+    overflow-x: hidden;
+}
+
+/* Remove list styles */
+ol, ul {
+    list-style: none;
+}
+
+/* Standardize media elements */
+img, picture, video, canvas, svg {
+    display: block;
+    max-width: 100%;
+}
+
+/* Inherit fonts for inputs */
+input, button, textarea, select {
+    font: inherit;
+}
+
+/* Remove default focus ring */
+*:focus {
+    outline: none;
+}
+
+/* --- WinUI Thin Scrollbars --- */
+::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--wui-text-secondary);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--wui-accent);
+}
+
+/* --- Font Definitions --- */
+@font-face {
+    font-family: "Selawik";
+    src: url("fonts/selawik.ttf") format("truetype");
+    font-weight: 400;
+}
+
+@font-face {
+    font-family: 'Fluent UI System Icons';
+    src: url('fonts/FluentSystemIcons-Regular.ttf') format('truetype');
+}
+
+:root {
+    /* Color Tokens - Light Theme */
+    --wui-accent: #005fb8;
+    --wui-accent-hover: #196ec0;
+    --wui-accent-active: #3184ca;
+    --wui-bg-page: #f3f3f3;
+    --wui-bg-card: #ffffff;
+    --wui-text-main: #1a1a1a;
+    --wui-text-secondary: #616161;
+    --wui-text-disabled: #9d9d9d;
+    --wui-border-light: rgba(0, 0, 0, 0.08);
+    --wui-border-strong: rgba(0, 0, 0, 0.44);
+    --wui-control-bg: #fbfbfb;
+    --wui-control-hover: #f6f6f6;
+    
+    /* Typography Tokens */
+    --wui-font-stack: "Segoe UI Variable Text", "Segoe UI", "Selawik", system-ui, sans-serif;
+    --wui-icon-font: "Segoe MDL2 Assets", "Fluent UI System Icons";
+    
+    /* Elevation */
+    --wui-shadow: 0 2px 4px rgba(0,0,0,0.04);
+}
+
+/* Dark Mode Overrides */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --wui-bg-page: #202020;
+        --wui-bg-card: rgba(255, 255, 255, 0.05);
+        --wui-text-main: #ffffff;
+        --wui-text-secondary: #adadad;
+        --wui-border-light: rgba(255, 255, 255, 0.08);
+        --wui-border-strong: rgba(255, 255, 255, 0.54);
+        --wui-control-bg: rgba(255, 255, 255, 0.06);
+        --wui-control-hover: rgba(255, 255, 255, 0.09);
+        --wui-accent: #60cdff;
+    }
+}
+
+/* --- Core Styles --- */
+body {
+    background-color: var(--wui-bg-page);
+    color: var(--wui-text-main);
+    padding: 30px;
+    font-size: 14px;
+    font-family: var(--wui-font-stack);
+}
+
+/* --- Typography --- */
+h1, h2, h3, h4 { font-weight: 600; margin: 0 0 12px 0; }
+h1 { font-size: 28px; letter-spacing: -0.01em; }
+h2 { font-size: 20px; }
+h3 { font-size: 16px; }
+p { margin-bottom: 12px; color: var(--wui-text-secondary); }
+
+a { 
+    color: var(--wui-accent); 
+    text-decoration: none; 
+    border-radius: 4px; 
+    padding: 2px 4px; 
+    transition: 0.1s; 
+}
+a:hover { background-color: var(--wui-control-hover); }
+
+/* --- Buttons --- */
+button, input[type="button"], input[type="submit"] {
+    background-color: var(--wui-control-bg);
+    border: 1px solid var(--wui-border-light);
+    border-bottom: 1.3px solid var(--wui-border-strong);
+    border-radius: 4px;
+    color: var(--wui-text-main);
+    padding: 5px 16px;
+    min-width: 100px;
+    height: 32px;
+    font-size: 14px;
+    cursor: default;
+    user-select: none;
+    transition: all 0.1s cubic-bezier(0.7, 0, 0.3, 1);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+button:hover { background-color: var(--wui-control-hover); }
+button:active { transform: scale(0.98); background-color: rgba(128, 128, 128, 0.06); }
+
+button[disabled] {
+    opacity: 0.6;
+    background-color: var(--wui-border-light);
+    border-bottom: 1px solid var(--wui-border-light);
+    color: var(--wui-text-disabled);
+    pointer-events: none;
+}
+
+button.primary, button[type="submit"] {
+    background-color: var(--wui-accent);
+    color: #ffffff;
+    border: 1px solid rgba(0,0,0,0.1);
+    border-bottom: 1px solid rgba(0,0,0,0.3);
+}
+button.primary:hover { filter: brightness(1.1); }
+
+/* --- Inputs & Selection (Fixing the layout jump) --- */
+input[type="text"], input[type="password"], input[type="email"], 
+input[type="number"], textarea, select {
+    background-color: var(--wui-control-bg);
+    border: 1px solid var(--wui-border-light);
+    /* Set a constant 2px bottom border to prevent displacement */
+    border-bottom: 2px solid var(--wui-border-strong);
+    border-radius: 4px;
+    padding: 6px 12px;
+    color: var(--wui-text-main);
+    transition: background 0.2s;
+    height: 32px;
+}
+
+textarea { height: auto; }
+
+/* The focus indicator uses the existing 2px border, only changing color */
+input:focus, textarea:focus, select:focus {
+    background: var(--wui-bg-card);
+    border-bottom-color: var(--wui-accent);
+}
+
+/* Selection Indicator for Custom Lists (Optional Class) */
+/* This absolute positioning prevents "pushing" the text */
+.wui-selection-item {
+    position: relative;
+    padding: 8px 12px 8px 16px;
+    cursor: default;
+    border-radius: 4px;
+}
+.wui-selection-item:hover { background: var(--wui-control-hover); }
+.wui-selection-item.selected::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 25%;
+    height: 50%;
+    width: 3px;
+    background: var(--wui-accent);
+    border-radius: 2px;
+}
+
+/* --- Checkbox & Radio --- */
+input[type="checkbox"], input[type="radio"] {
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border: 1px solid var(--wui-border-strong);
+    border-radius: 4px;
+    background: var(--wui-control-bg);
+    vertical-align: middle;
+    position: relative;
+    cursor: pointer;
+    margin: 0 8px 0 0;
+}
+
+input[type="radio"] { border-radius: 50%; }
+input[type="checkbox"]:checked, input[type="radio"]:checked {
+    background-color: var(--wui-accent);
+    border: none;
+}
+
+input[type="checkbox"]:checked::after {
+    content: "\E73E"; 
+    font-family: var(--wui-icon-font);
+    font-size: 10px;
+    color: white;
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+input[type="radio"]:checked::after {
+    content: "";
+    width: 8px; height: 8px;
+    background: white;
+    border-radius: 50%;
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* --- Volume Bar (Slider / Range) --- */
+/* Cleaned up: No indicator bar below the slider container */
+input[type="range"] {
+    appearance: none;
+    background: transparent;
+    cursor: pointer;
+    width: 100%;
+    height: 32px; /* Container height */
+    display: block;
+}
+
+input[type="range"]::-webkit-slider-runnable-track {
+    background: var(--wui-text-secondary);
+    height: 4px;
+    border-radius: 2px;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    appearance: none;
+    height: 18px;
+    width: 18px;
+    background: var(--wui-accent);
+    border: 3px solid var(--wui-bg-card);
+    border-radius: 50%;
+    margin-top: -7px; /* Centers thumb on 4px track */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+    transition: transform 0.1s;
+}
+
+input[type="range"]:active::-webkit-slider-thumb {
+    transform: scale(0.8);
+}
+
+/* --- Progress Bar --- */
+progress {
+    appearance: none;
+    height: 4px;
+    width: 100%;
+    border-radius: 2px;
+    overflow: hidden;
+    display: block;
+    margin: 10px 0;
+}
+progress::-webkit-progress-bar { background-color: var(--wui-border-light); }
+progress::-webkit-progress-value { background-color: var(--wui-accent); transition: width 0.3s ease; }
+
+/* --- Tables --- */
+table {
+    width: 100%;
+    border-spacing: 0;
+    background: var(--wui-bg-card);
+    border-radius: 8px;
+    border: 1px solid var(--wui-border-light);
+    box-shadow: var(--wui-shadow);
+    overflow: hidden;
+}
+
+th {
+    text-align: left;
+    padding: 12px;
+    background: rgba(128, 128, 128, 0.02);
+    border-bottom: 1px solid var(--wui-border-light);
+    font-weight: 600;
+}
+
+td { padding: 12px; border-bottom: 1px solid var(--wui-border-light); }
+tr:hover { background: var(--wui-control-hover); }
+
+/* --- Containers --- */
+.card {
+    background: var(--wui-bg-card);
+    border: 1px solid var(--wui-border-light);
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: var(--wui-shadow);
+    margin-bottom: 20px;
+}
+
+details {
+    background: var(--wui-bg-card);
+    border: 1px solid var(--wui-border-light);
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+summary {
+    padding: 12px 16px;
+    cursor: pointer;
+    list-style: none;
+    font-weight: 500;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+summary::after {
+    content: "\E70D"; 
+    font-family: var(--wui-icon-font);
+    font-size: 12px;
+    transition: 0.3s;
+}
+
+details[open] summary::after { transform: rotate(180deg); }
+
+.details-content { padding: 0 16px 16px 16px; color: var(--wui-text-secondary); }
+
+/* --- Icon System --- */
+.wui-icon {
+    font-family: var(--wui-icon-font);
+    font-style: normal;
+    display: inline-block;
+    vertical-align: middle;
+    line-height: 1;
+}
+
+/* --- Animations --- */
+@keyframes wui-pop {
+    0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
+    100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+}

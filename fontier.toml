@@ -5,7 +5,3 @@ description = "High-performance polyglot calculator"
 copyright = "© 2026 Frontier Org"
 author = "Frontier Dev"
 icon = "app/frontend/icon.ico"
-
-[security]
-allowed_internal = []
-allowed_browser = []

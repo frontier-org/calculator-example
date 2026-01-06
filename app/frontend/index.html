@@ -6,61 +6,117 @@
     <meta name="frontier-icon" content="icon.ico">
     <meta name="frontier-width" content="320">
     <meta name="frontier-height" content="470">
-    <meta name="frontier-min-width" content="250">
-    <meta name="frontier-min-height" content="400">
+    <meta name="frontier-min-width" content="260">
+    <meta name="frontier-min-height" content="390">
     <meta name="frontier-resizable" content="true">
-    <meta name="frontier-x" content="(screen_w - win_w) / 2">
-    <meta name="frontier-y" content="(screen_h - win_h) / 2">
-
-    <link rel="stylesheet" href="winui_3.css">
+    
+    <!-- Link para o novo CSS consolidado -->
+    <link rel="stylesheet" href="styles/winui-3-css/winui-3.css">
     
     <style>
-        header { padding: 8px; flex-shrink: 0; }
-        
+        body {
+            /* O CSS WinUI já define a cor de fundo, mas garantimos o layout aqui */
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            margin: 0;
+            padding: 0; /* Remove o padding padrão do body para a calculadora ocupar tudo */
+        }
+
+        header { 
+            padding: 12px; 
+            flex-shrink: 0;
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+            background: transparent;
+        }
+
+        /* Ajuste do seletor para não pular e caber no header */
+        header select {
+            width: 140px;
+            height: 28px;
+            padding: 2px 8px;
+            font-size: 12px;
+        }
+
+        header a {
+            font-size: 12px;
+            font-weight: 500;
+        }
+
         .display-unit {
             flex: 1;
             display: flex;
             flex-direction: column;
             justify-content: flex-end;
             align-items: flex-end;
-            padding: 10px 16px;
+            padding: 10px 20px;
+            min-height: 80px;
         }
 
-        #expr { font-size: 14px; opacity: 0.6; height: 20px; }
-        #res { font-size: 48px; font-weight: 600; line-height: 1; }
+        #expr { 
+            font-size: 14px; 
+            color: var(--wui-text-secondary); 
+            height: 20px; 
+            font-family: var(--wui-font-stack);
+        }
+
+        #res {
+            font-size: clamp(32px, 12vw, 56px); 
+            font-weight: 600; 
+            line-height: 1.2; 
+            color: var(--wui-text-main);
+            font-family: var(--wui-font-stack);
+        }
 
         .keypad {
             height: 65%; 
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             grid-template-rows: repeat(5, 1fr);
-            gap: 2px;
+            gap: 2px; /* Espaçamento fino padrão WinUI */
             padding: 4px;
             flex-shrink: 0;
+            background: rgba(0,0,0,0.02); /* Leve fundo para a área das teclas */
         }
 
-        .op { background-color: var(--wui-op-bg) !important; }
-        .accent { 
-            background-color: var(--wui-accent) !important; 
-            color: var(--wui-accent-text) !important; 
-            border: none;
+        /* Sobrescrevendo o estilo nativo do botão apenas para o grid da calculadora */
+        .keypad button {
+            width: 100% !important;
+            height: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            min-width: 0 !important;
+            border-radius: 4px;
+            font-size: 18px !important;
         }
+
+        /* Estilo específico para botões numéricos (opcional, para ser mais fiel) */
+        .key-number {
+            background-color: var(--wui-bg-card) !important;
+        }
+
         .spacer { visibility: hidden; }
     </style>
 </head>
 <body>
 
     <header>
-        <div class="win-dropdown">
-            <select id="engine-selector">
-                <option value="calc_c">C Engine</option>
-                <option value="calc_cpp">C++ Engine</option>
-                <option value="calc_go">Go Engine</option>
-                <option value="calc_py">Python Engine</option>
-                <option value="calc_node">Node.js Engine</option>
-                <option value="calc_java">Java Engine</option>
-            </select>
-        </div>
+        <!-- Select nativo já estilizado pelo novo CSS -->
+        <select id="engine-selector">
+            <option value="calc_c">C Engine</option>
+            <option value="calc_cpp">C++ Engine</option>
+            <option value="calc_go">Go Engine</option>
+            <option value="calc_py">Python Engine</option>
+            <option value="calc_node">Node.js Engine</option>
+            <option value="calc_java">Java Engine</option>
+        </select>
+
+        <a href="https://github.com/frontier-org/calculator-example">
+            About
+        </a>
     </header>
 
     <main class="display-unit">
@@ -69,62 +125,117 @@
     </main>
 
     <footer class="keypad">
-        <button class="op" onclick="clearAll()">C</button>
-        <button class="op" onclick="add('(')">(</button>
-        <button class="op" onclick="add(')')">)</button>
-        <button class="op" onclick="add('/')">÷</button>
+        <!-- Uso das tags nativas 'button' conforme o novo CSS -->
+        <button onclick="Calc.clear()" data-key="Escape">C</button>
+        <button onclick="Calc.add('(')" data-key="(">(</button>
+        <button onclick="Calc.add(')')" data-key=")">)</button>
+        <button onclick="Calc.add('/')" data-key="/">÷</button>
 
-        <button onclick="add('7')">7</button>
-        <button onclick="add('8')">8</button>
-        <button onclick="add('9')">9</button>
-        <button class="op" onclick="add('*')">×</button>
+        <button class="key-number" onclick="Calc.add('7')" data-key="7">7</button>
+        <button class="key-number" onclick="Calc.add('8')" data-key="8">8</button>
+        <button class="key-number" onclick="Calc.add('9')" data-key="9">9</button>
+        <button onclick="Calc.add('*')" data-key="*">×</button>
 
-        <button onclick="add('4')">4</button>
-        <button onclick="add('5')">5</button>
-        <button onclick="add('6')">6</button>
-        <button class="op" onclick="add('-')">−</button>
+        <button class="key-number" onclick="Calc.add('4')" data-key="4">4</button>
+        <button class="key-number" onclick="Calc.add('5')" data-key="5">5</button>
+        <button class="key-number" onclick="Calc.add('6')" data-key="6">6</button>
+        <button onclick="Calc.add('-')" data-key="-">-</button>
 
-        <button onclick="add('1')">1</button>
-        <button onclick="add('2')">2</button>
-        <button onclick="add('3')">3</button>
-        <button class="op" onclick="add('+')">+</button>
+        <button class="key-number" onclick="Calc.add('1')" data-key="1">1</button>
+        <button class="key-number" onclick="Calc.add('2')" data-key="2">2</button>
+        <button class="key-number" onclick="Calc.add('3')" data-key="3">3</button>
+        <button onclick="Calc.add('+')" data-key="+">+</button>
 
         <div class="spacer"></div>
-        <button onclick="add('0')">0</button>
-        <button onclick="add('.')">.</button>
-        <button class="accent" onclick="calculate()">=</button>
+        <button class="key-number" onclick="Calc.add('0')" data-key="0">0</button>
+        <button class="key-number" onclick="Calc.add('.')" data-key=".">.</button>
+        <!-- Classe .primary do novo CSS para o botão de igual -->
+        <button class="primary" onclick="Calc.calculate()" data-key="Enter">=</button>
     </footer>
 
     <script>
-        // Variáveis globais que o WinUI.js vai acessar
         const exprDiv = document.getElementById('expr');
         const resDiv = document.getElementById('res');
-        window.currentExpr = ""; // Colocado no window para o JS enxergar
 
-        function add(char) {
-            window.currentExpr += char;
-            exprDiv.innerText = window.currentExpr;
+        const Calc = {
+            currentExpr: "",
+            
+            add(char) {
+                this.currentExpr += char;
+                exprDiv.innerText = this.currentExpr;
+            },
+
+            clear() {
+                this.currentExpr = "";
+                exprDiv.innerText = "";
+                resDiv.innerText = "0";
+            },
+
+            backspace() {
+                this.currentExpr = this.currentExpr.slice(0, -1);
+                exprDiv.innerText = this.currentExpr || "";
+                if (!this.currentExpr) resDiv.innerText = "0";
+            },
+
+            calculate() {
+                if (!this.currentExpr) return;
+                const engine = document.getElementById('engine-selector').value;
+                const cleanExpr = this.currentExpr.replace(/\s+/g, '');
+                
+                if (window.ipc) {
+                    window.ipc.postMessage(`${engine}|${cleanExpr}`);
+                } else {
+                    // Fallback para teste local sem IPC
+                    try {
+                        const result = eval(cleanExpr.replace('×', '*').replace('÷', '/'));
+                        resDiv.innerText = result;
+                    } catch(e) { resDiv.innerText = "Error"; }
+                }
+            }
+        };
+
+        // Atalhos de teclado
+        document.addEventListener('keydown', (e) => {
+            const keyMap = {
+                'Enter': () => Calc.calculate(),
+                '=':     () => Calc.calculate(),
+                'Backspace': () => Calc.backspace(),
+                'Escape':() => Calc.clear(),
+                'Delete':() => Calc.clear(),
+                'c':     () => Calc.clear(),
+                'C':     () => Calc.clear()
+            };
+
+            if (keyMap[e.key]) {
+                e.preventDefault();
+                keyMap[e.key]();
+                triggerVisualFeedback(e.key);
+            } else if (/[0-9+\-*/.()]/.test(e.key)) {
+                Calc.add(e.key);
+                triggerVisualFeedback(e.key);
+            }
+        });
+
+        function triggerVisualFeedback(key) {
+            const targetKey = (key === 'Enter' || key === '=') ? '=' : key;
+            const btn = Array.from(document.querySelectorAll('button')).find(b => 
+                b.innerText === targetKey || b.getAttribute('data-key') === key
+            );
+
+            if (btn) {
+                // Efeito de clique WinUI
+                btn.style.transform = 'scale(0.96)';
+                btn.style.backgroundColor = 'var(--wui-control-hover)';
+                setTimeout(() => {
+                    btn.style.transform = '';
+                    btn.style.backgroundColor = '';
+                }, 100);
+            }
         }
 
-        function clearAll() {
-            window.currentExpr = "";
-            exprDiv.innerText = "";
-            resDiv.innerText = "0";
-        }
-
-        function calculate() {
-            if (window.currentExpr === "") return;
-            const engine = document.getElementById('engine-selector').value;
-            const cleanExpr = window.currentExpr.replace(/\s+/g, '');
-            window.ipc.postMessage(`${engine}|${cleanExpr}`);
-        }
-
-        // Retorno do Rust
         window.Frontier = {
             dispatch: (type, msg) => { resDiv.innerText = msg; }
         };
     </script>
-
-    <script src="winui_3.js"></script>
 </body>
 </html>
