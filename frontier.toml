@@ -4,7 +4,7 @@
 [app]
 name = "Polyglot Calc"
 version = "1.0.0"
-description = "High-performance polyglot calculator"
-copyright = "© 2026 Frontier Org"
-author = "Frontier Dev"
+description = "A simple example of a calculator made with Frontier"
+copyright = "2026 The Frontier Framework Authors"
+author = "The Frontier Framework Authors"
 icon = "app/frontend/icon.ico"
