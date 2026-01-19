@@ -1,3 +1,6 @@
+:: Copyright (c) 2026 The Frontier Framework Authors
+:: SPDX-License-Identifier: Apache-2.0 OR MIT
+
 @echo off
 setlocal enabledelayedexpansion
 set "CLASS_NAME=%~n1"
