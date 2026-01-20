@@ -1,0 +1,57 @@
+# Copyright (c) 2026 The Frontier Framework Authors
+# SPDX-License-Identifier: Apache-2.0 OR MIT
+
+name: Build Frontier App Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build-release:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: stable
+
+      - name: Install Frontier
+        run: |
+          echo "" | powershell -nop "iex(irm https://frontier-fw.dev/get.ps1)"
+
+      - name: Build Frontier App
+        run: .\frontier build
+
+      - name: Extract App Information
+        id: get_app_info
+        shell: pwsh
+        run: |
+          $toml = Get-Content frontier.toml -Raw
+          if ($toml -match '(?ms)\[app\].*?name\s*=\s*"(?<name>[^"]+)"') {
+              $appName = $Matches['name']
+              echo "APP_NAME=$appName" >> $env:GITHUB_ENV
+              echo "APP_PATH=./bin/$appName.exe" >> $env:GITHUB_ENV
+          } else {
+              Write-Error "Failed to find 'name' under [app] in frontier.toml"
+              exit 1
+          }
+
+      - name: Create Release and Upload File
+        uses: softprops/action-gh-release@v2
+        with:
+          name: "${{ github.repository }} - ${{ github.ref_name }}"
+          generate_release_notes: true
+          files: ${{ env.APP_PATH }}
+          prerelease: ${{ contains(github.ref_name, '-') }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
