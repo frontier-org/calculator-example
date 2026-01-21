@@ -76,8 +76,7 @@ jobs:
       # --- Install Frontier ---
 
       - name: Install Frontier CLI
-        run: |
-          echo "" | powershell -nop "iex(irm https://frontier-fw.dev/get.ps1)"
+        run: $v='0.1.0'; $p='.'; $ni=$true; $nu=$true; iex(irm https://frontier-fw.dev/get.ps1)
 
       # --- Build Process ---
 
