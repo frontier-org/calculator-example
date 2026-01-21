@@ -4,10 +4,11 @@
 name = "Mod Java"
 version = "1.0.0"
 extension = "java"
-interpreter = "modules/mod_java/javac_bridge.bat"
+target_extension = "jar"   
+interpreter = "java -jar"
 
 [dev]
 strategy = "build"
 
 [build]
-command = "javac %IN% -d .frontier/target/dev_cache"
+command = "modules\\mod_java\\builder.bat %IN% %OUT%"

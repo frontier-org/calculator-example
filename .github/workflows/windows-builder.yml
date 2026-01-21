@@ -36,12 +36,6 @@ jobs:
           go-version: 'stable'
           cache: true # Built-in Go cache
 
-      - name: Set up GCC (MinGW)
-        if: steps.cache-mingw.outputs.cache-hit != 'true'
-        run: |
-          choco install mingw --unattended
-          echo "C:\tools\mingw64\bin" >> $env:GITHUB_PATH
-
       # Cache MinGW (GCC) to avoid re-downloading via Choco (saves ~2 mins)
       - name: Cache MinGW
         id: cache-mingw
@@ -49,6 +43,12 @@ jobs:
         with:
           path: C:\tools\mingw64
           key: ${{ runner.os }}-mingw
+
+      - name: Set up GCC (MinGW)
+        if: steps.cache-mingw.outputs.cache-hit != 'true'
+        run: |
+          choco install mingw --unattended
+          echo "C:\tools\mingw64\bin" >> $env:GITHUB_PATH
 
       # Cache Rust & Cargo dependencies + Frontier's custom target folder
       - name: Cache Frontier and Rust
