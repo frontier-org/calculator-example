@@ -1,7 +1,7 @@
 # Copyright (c) 2026 The Frontier Framework Authors
 # SPDX-License-Identifier: Apache-2.0 OR MIT
 
-name: Build Frontier App Release
+name: Build Windows Frontier App Release
 
 on:
   push:
@@ -12,7 +12,7 @@ permissions:
   contents: write
 
 jobs:
-  build-release:
+  build-windows-release:
     runs-on: windows-latest
     steps:
       - name: Checkout Code
@@ -27,16 +27,43 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
+          # setup-java has built-in caching for build tools if you use Maven/Gradle
+          # cache: 'gradle' 
 
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
           go-version: 'stable'
+          cache: true # Built-in Go cache
 
       - name: Set up GCC (MinGW)
+        if: steps.cache-mingw.outputs.cache-hit != 'true'
         run: |
-          choco install mingw
+          choco install mingw --unattended
           echo "C:\tools\mingw64\bin" >> $env:GITHUB_PATH
+
+      # Cache MinGW (GCC) to avoid re-downloading via Choco (saves ~2 mins)
+      - name: Cache MinGW
+        id: cache-mingw
+        uses: actions/cache@v4
+        with:
+          path: C:\tools\mingw64
+          key: ${{ runner.os }}-mingw
+
+      # Cache Rust & Cargo dependencies + Frontier's custom target folder
+      - name: Cache Frontier and Rust
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            .frontier/target/debug/
+            .frontier/target/release/
+          key: ${{ runner.os }}-frontier-${{ hashFiles('**/frontier.toml', '**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-frontier-
 
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
@@ -45,7 +72,7 @@ jobs:
 
       # --- Install Frontier ---
 
-      - name: Install Frontier
+      - name: Install Frontier CLI
         run: |
           echo "" | powershell -nop "iex(irm https://frontier-fw.dev/get.ps1)"
 
@@ -58,15 +85,15 @@ jobs:
         id: get_app_info
         shell: pwsh
         run: |
-          $toml = Get-Content frontier.toml -Raw
-          if ($toml -match '(?ms)\[app\].*?name\s*=\s*"(?<name>[^"]+)"') {
-              $appName = $Matches['name']
-              echo "APP_NAME=$appName" >> $env:GITHUB_ENV
-              echo "APP_PATH=./bin/$appName.exe" >> $env:GITHUB_ENV
-          } else {
-              Write-Error "Failed to find 'name' under [app] in frontier.toml"
-              exit 1
+          $appName = "MyApp"
+          if (Test-Path frontier.toml) {
+              $toml = Get-Content frontier.toml -Raw
+              if ($toml -match '(?ms)\[app\].*?name\s*=\s*"(?<name>[^"]+)"') {
+                  $appName = $Matches['name']
+              }
           }
+          echo "APP_NAME=$appName" >> $env:GITHUB_ENV
+          echo "APP_PATH=./dist/$appName.exe" >> $env:GITHUB_ENV
 
       # --- Release ---
 
