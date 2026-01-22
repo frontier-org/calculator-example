@@ -53,6 +53,8 @@ jobs:
           choco install mingw --unattended
           echo "C:\tools\mingw64\bin" >> $env:GITHUB_PATH
 
+      # --- Install Rust ---
+
       - name: Cache Rust
         uses: actions/cache@v4
         with:
@@ -64,7 +66,7 @@ jobs:
           key: ${{ runner.os }}-cargo-v1
           restore-keys: ${{ runner.os }}-cargo-
 
-      - name: Set up Rust
+      - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: stable
