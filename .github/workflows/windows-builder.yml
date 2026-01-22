@@ -44,7 +44,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: C:\ProgramData\chocolatey\lib\mingw
-          key: ${{ runner.os }}-mingw
+          key: ${{ runner.os }}-mingw-v1
           restore-keys: ${{ runner.os }}-mingw-
 
       - name: Set up MinGW (GCC)
