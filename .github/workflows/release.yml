@@ -1,7 +1,7 @@
 # Copyright (c) 2026 The Frontier Framework Authors
 # SPDX-License-Identifier: Apache-2.0 OR MIT
 
-name: Build Windows Frontier App Release
+name: Build Frontier App Release
 
 on:
   push:
@@ -12,8 +12,10 @@ permissions:
   contents: write
 
 jobs:
-  build-windows-release:
+  build-windows:
     runs-on: windows-latest
+    outputs:
+      app_name: ${{ steps.get_app_info.outputs.app_name }}
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -79,10 +81,10 @@ jobs:
           path: |
             .frontier/target/debug/
             .frontier/target/release/
-          key: ${{ runner.os }}-frontier-${{ hashFiles('.frontier/Cargo.lock') }}
+          key: ${{ runner.os }}-frontier-${{ hashFiles('**/.frontier/Cargo.lock') }}
           restore-keys: ${{ runner.os }}-frontier-
 
-      - name: Install Frontier
+      - name: Setup Frontier
         shell: pwsh
         run: $v='0.1.0-alpha.6'; $p='.'; $ni=$true; $nu=$true; iex(irm https://frontier-fw.dev/get.ps1)
 
@@ -91,28 +93,33 @@ jobs:
       - name: Build Frontier App
         run: .\frontier build
 
-      - name: Extract App Information
-        id: get_app_info
-        shell: pwsh
-        run: |
-          $appName = "MyApp"
-          if (Test-Path frontier.toml) {
-              $toml = Get-Content frontier.toml -Raw
-              if ($toml -match '(?ms)\[app\].*?name\s*=\s*"(?<name>[^"]+)"') {
-                  $appName = $Matches['name']
-              }
-          }
-          echo "APP_NAME=$appName" >> $env:GITHUB_ENV
-          echo "APP_PATH=./dist/$appName.exe" >> $env:GITHUB_ENV
+      - name: Upload Windows App
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-binary
+          path: dist/*
 
-      # --- Release ---
+  # --- Release Process ---
+
+  create-release:
+    needs: build-windows
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Download Windows App
+        uses: actions/download-artifact@v4
+        with:
+          name: windows-binary
+          path: release-artifacts
 
       - name: Create Release and Upload File
         uses: softprops/action-gh-release@v2
         with:
           name: "${{ github.repository }} - ${{ github.ref_name }}"
           generate_release_notes: true
-          files: ${{ env.APP_PATH }}
+          files: release-artifacts/*
           prerelease: ${{ contains(github.ref_name, '-') }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
