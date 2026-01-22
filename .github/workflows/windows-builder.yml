@@ -77,7 +77,7 @@ jobs:
 
       - name: Install Frontier CLI
         shell: pwsh
-        run: $v='0.1.0'; $p='.'; $ni=$true; $nu=$true; iex(irm https://frontier-fw.dev/get.ps1)
+        run: $v='0.1.0-alpha.6'; $p='.'; $ni=$true; $nu=$true; iex(irm https://frontier-fw.dev/get.ps1)
 
       # --- Build Process ---
 
